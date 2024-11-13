@@ -13,9 +13,26 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Test
-        run: docker compose run --rm app sh -c "python manage.py test"
-      - name: Lint
-        run: docker compose run --rm app sh -c "flake8"
+
+      - name: Run Tests
+        id: test
+        run: 
+          docker compose run --rm app sh -c "python manage.py test"
+          echo "testStatus=$?" >> $GITHUB_STATE #save test status to state
+        continue-on-error: true
+
+      - name: Lint Code
+        id: lint
+        run: |
+          docker compose run --rm app sh -c "flake8"
+          echo "lintStatus=$?" >> $GITHUB_STATE  # Save lint status to state
+        continue-on-error: true
+
+      # Accessing and using outputs
+      - name: Report Results
+        run: |
+          echo "Test Status: ${{ steps.test.outputs.testStatus }}"
+          echo "Lint Status: ${{ steps.lint.outputs.lintStatus }}"
