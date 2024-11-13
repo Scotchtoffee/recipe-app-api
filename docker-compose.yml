@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        DEV: "true"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+
+    #If you don't specify a command, BY default IT WILL use the
+     #the command we define in the docker-compose file
+
+     #docker-compose does essentially what it does  docker build, BUT IT DOES VIA THE DOCKER FILE
+     #So it builds and tags images appropriately for running
+     #our docker compose configuration
