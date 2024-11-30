@@ -23,8 +23,8 @@ jobs:
           docker compose run --rm app sh -c "python manage.py test"
          # echo "testStatus=$?" >> $GITHUB_STATE #save test status to state
         continue-on-error: true
-        outputs:
-          testStatus: $?
+        env:
+          TEST_STATUS: $?
 
       - name: Lint Code
         id: lint
@@ -32,11 +32,13 @@ jobs:
           docker compose run --rm app sh -c "flake8"
          # echo "lintStatus=$?" >> $GITHUB_STATE  # Save lint status to state
         continue-on-error: true
-        outputs:
-          lintStatus: $?
+        env:
+         LINT_STATUS: $?
 
       # Accessing and using outputs
       - name: Report Results
         run: |
-          echo "Test Status: ${{ steps.test.outputs.testStatus }}"
-          echo "Lint Status: ${{ steps.lint.outputs.lintStatus }}"
+          echo "Test Status: ${{ env.TEST_STATUS }}"
+          echo "Lint Status: ${{ env.LINT_STATUS }}" 
+        #echo "Test Status: ${{ steps.test.outputs.testStatus }}"
+        #echo "Lint Status: ${{ steps.lint.outputs.lintStatus }}"
